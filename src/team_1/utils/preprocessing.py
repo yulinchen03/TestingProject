@@ -7,6 +7,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
 from scipy.stats import skew
 
+
 class DataProcessor:
     def __init__(self, X, y, most_important_features):
         self.X = X
@@ -163,4 +164,3 @@ class DataProcessor:
             self.y_balanced = self.y
 
         return self.X_balanced, self.y_balanced
-
