@@ -18,3 +18,4 @@ mlprodict
 jupyter
 notebook
 ipykernel
+imblearn
