@@ -10,12 +10,12 @@ def add_checked(df):
     return df
 
 
-def test_bias(data_path, model_path):
+def test_bias(data_path, model_path, feature, new_val):
     model = rt.InferenceSession(model_path)
 
     df = add_checked(pd.read_csv(data_path))
     df_change = df.copy()
-    df_change['persoon_geslacht_vrouw'] = 1 # change value of feature here
+    df_change[feature] = new_val # change value of feature here
 
     X_1 = df.drop(['checked', 'Ja', 'Nee'], axis=1)
     y_1 = df['checked']
