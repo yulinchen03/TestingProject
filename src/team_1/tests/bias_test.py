@@ -10,24 +10,26 @@ from sklearn.metrics import accuracy_score
 IMPORTANT! READ BEFORE WRITING TESTS
 
 Naming convention:
-    Tests should be named as follows: test_<root_{feature_to_test}>.
+    Tests should be named as follows: test_root_featureA_featureB_.... The root is the feature you want to test.
+    The features A, B, ... are the features that you want to test in relation to the root feature (tree branches).
+    If you still have no idea what I'm talking about, check the example below.
 
 How to write tests (WTF is going on):
     Each test tests the bias in specific subset of features. For more information,
     check this: https://www.wired.com/story/welfare-state-algorithms/.
     What they do is show how rating of a person will change if some/multiple parameters
     will change. So, this is what our tests should do. For example, if we choose subset
-    that contains gender with particular additional feature (like has_children), we can test
-    how the rating will change if we swap the gender in a subset of has_children=true.
+    that contains gender with particular additional feature (like haschildren), we can test
+    how the rating will change if we swap the gender in a subset of haschildren=true.
     You root is gender, and feature_to_test is has_children. You can also test only root features,
-    then the test name will be test_<root> (e.g. test_gender).
+    then the test name will be test_root (e.g. test_gender).
     Example test provided below.
 
 Data generation:
     Before writing tests, you need to generate data. You can use the data generation script
     provided here: https://github.com/abuszydlik/Social-Welfare-Dataset/blob/main/DataManual.md.
     Essentially, you can choose specific features and their values, and generate data
-    from distribution. Use the same naming convention for tests like "data_<root_{feature_to_test}>".
+    from distribution. Use the same naming convention for tests like "data_root_featureA_featureB_...".
 
 Run tests:
     Just in case if you forgot how to do it: python -m unittest <relative_test_path>
