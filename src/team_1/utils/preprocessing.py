@@ -36,7 +36,7 @@ class DataProcessor:
             data = pd.DataFrame({'Values': sorted_values, 'Counts': sorted_counts})
 
             # Create 10 bins
-            bins = np.linspace(min(values), max(values), 11)  # 10 bins means 11 edges
+            bins = np.linspace(min(values), max(values), 10)
             bins = [int(round(num)) for num in bins]
             data['Bins'] = pd.cut(data['Values'], bins=bins, include_lowest=False)
 
@@ -111,29 +111,29 @@ class DataProcessor:
             smote = SMOTE(sampling_strategy=0.75, random_state=42)  # Minority class becomes 75% of majority
             self.X_balanced, self.y_balanced = smote.fit_resample(self.X_balanced, self.y_balanced)
 
-            print("\nAfter resampling:\n")
-            y_values, y_counts = self.count_distribution(self.y)
-            y_balanced_values, y_balanced_counts = self.count_distribution(self.y_balanced)
-
             if visualize:
+                print("\nAfter resampling:\n")
+                y_values, y_counts = self.count_distribution(self.y)
+                y_balanced_values, y_balanced_counts = self.count_distribution(self.y_balanced)
+
                 self.plot_distributions('checked', y_values, y_counts,
                                         title='Distribution of class labels before balancing: ')
                 self.plot_distributions('checked', y_balanced_values, y_balanced_counts,
                                         title='Distribution of class labels after balancing: ', color='gold')
 
-            y_entropy, y_cov = self.compute_stats(y_counts)
-            y_balanced_entropy, y_balanced_cov = self.compute_stats(y_balanced_counts)
+                y_entropy, y_cov = self.compute_stats(y_counts)
+                y_balanced_entropy, y_balanced_cov = self.compute_stats(y_balanced_counts)
 
-            print(f'-----------------------------------------------------------\n'
-                  f'Measurement of class balance before and after balancing:\n'
-                  f'Before\n'
-                  f'Entropy: {y_entropy}\n'
-                  f'Coefficient of variation: {y_cov}\n'
-                  f'\n'
-                  f'After\n'
-                  f'Entropy: {y_balanced_entropy}\n'
-                  f'Coefficient of variation: {y_balanced_cov}\n'
-                  f'-----------------------------------------------------------\n')
+                print(f'-----------------------------------------------------------\n'
+                      f'Measurement of class balance before and after balancing:\n'
+                      f'Before\n'
+                      f'Entropy: {y_entropy}\n'
+                      f'Coefficient of variation: {y_cov}\n'
+                      f'\n'
+                      f'After\n'
+                      f'Entropy: {y_balanced_entropy}\n'
+                      f'Coefficient of variation: {y_balanced_cov}\n'
+                      f'-----------------------------------------------------------\n')
 
             for feature in self.most_important_features:
                 feature_values, feature_counts = self.count_distribution(self.X_reduced[feature])
@@ -145,19 +145,19 @@ class DataProcessor:
                     self.plot_distributions(feature, feature_balanced_values, feature_balanced_counts,
                                             title='Distribution of feature values after balancing: ', color='gold')
 
-                entropy, cov = self.compute_stats(feature_counts)
-                balanced_entropy, balanced_cov = self.compute_stats(feature_balanced_counts)
+                    entropy, cov = self.compute_stats(feature_counts)
+                    balanced_entropy, balanced_cov = self.compute_stats(feature_balanced_counts)
 
-                print(f'-----------------------------------------------------------\n'
-                      f'Measurement of feature balance ({feature}) before and after balancing:\n'
-                      f'Before\n'
-                      f'Entropy: {entropy}\n'
-                      f'Coefficient of variation: {cov}\n'
-                      f'\n'
-                      f'After\n'
-                      f'Entropy: {balanced_entropy}\n'
-                      f'Coefficient of variation: {balanced_cov}\n'
-                      f'-----------------------------------------------------------\n')
+                    print(f'-----------------------------------------------------------\n'
+                          f'Measurement of feature balance ({feature}) before and after balancing:\n'
+                          f'Before\n'
+                          f'Entropy: {entropy}\n'
+                          f'Coefficient of variation: {cov}\n'
+                          f'\n'
+                          f'After\n'
+                          f'Entropy: {balanced_entropy}\n'
+                          f'Coefficient of variation: {balanced_cov}\n'
+                          f'-----------------------------------------------------------\n')
 
         else:
             self.X_balanced = self.X_reduced
