@@ -49,7 +49,7 @@ class BiasTest(unittest.TestCase):
     def setUp(self):
         self.new_session = ort.InferenceSession('path_to_your_model.onnx')
 
-    def test_gender_has_children(self):
+    def test_gender_haschildren(self):
         # Load the data
         df_gender = add_checked(pd.read_csv('data/examples/address_change.csv'))
 
