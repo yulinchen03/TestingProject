@@ -47,7 +47,7 @@ class BiasTest(unittest.TestCase):
     def test_gender_bias(self):
         # change this with your dataset's path
         data_path = '../../../data/Experiment_persoon_geslacht_vrouw/male_only.csv'
-        model_path = "../../../model/gboost.onnx"
+        model_path = "../../../model/gboost1.onnx" # replace with gboost2.onnx if you are working on the bad model
 
         # change this when you want to test a different feature
         feature = 'persoon_geslacht_vrouw'
