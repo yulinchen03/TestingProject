@@ -4,6 +4,7 @@ from scipy.stats import ttest_ind
 import unittest
 import onnxruntime as ort
 from sklearn.metrics import accuracy_score
+from src.tests.test_utils import *
 
 
 '''
@@ -38,33 +39,28 @@ Run tests:
 GOOD FUCKING LUCK!
 '''
 
-
-def add_checked(df):
-    df['checked'] = df['Ja'].apply(lambda x: 1 if x > 0.7 else 0)
-    return df
-
-
 class BiasTest(unittest.TestCase):
 
     def setUp(self):
-        self.new_session = ort.InferenceSession('path_to_your_model.onnx')
+        pass
 
-    def test_gender_haschildren(self):
-        # Load the data
-        df_gender = add_checked(pd.read_csv('data/examples/address_change.csv'))
+    def test_gender_bias(self):
+        # change this with your dataset's path
+        data_path = '../../../data/Experiment_persoon_geslacht_vrouw/male_only.csv'
+        model_path = "../../../model/gboost.onnx"
 
-        # # Predict for women
-        women_pred = df_gender[df_gender['persoon_geslacht_vrouw'] == 1]
-        X_women, y_women = women_pred.drop(['checked', 'Ja', 'Nee'], axis=1), women_pred['checked']
-        y_women_pred = self.new_session.run(None, {'X': X_women.values.astype(np.float32)})[0]
+        # change this when you want to test a different feature
+        feature = 'persoon_geslacht_vrouw'
 
-        # # Predict for men
-        X_men, y_men = women_pred.drop(['checked', 'Ja', 'Nee'], axis=1), women_pred['checked']
-        X_men['persoon_geslacht_vrouw'] = 0
-        y_men_pred = self.new_session.run(None, {'X': X_men.values.astype(np.float32)})[0]
+        new_val = 1  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
 
-        # acc_women = accuracy_score(y_women, y_women_pred)
-        # acc_men = accuracy_score(y_men, y_men_pred)
+        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
+            data_path, model_path, feature, new_val)  # DO NOT CHANGE
 
-        _, p_value = ttest_ind(y_women_pred, y_men_pred)
-        self.assertGreater(p_value, 0.05, msg=f"Significant difference was found!")
+        # Results messages (replace it with your own)
+        print(f'Accuracy for sample of {dataset_size} Men: {acc_original * 100:.1f}%')
+        print(f'Accuracy for sample of {dataset_size} Women: {acc_changed * 100:.1f}%')
+        print(f'Percentage checked amongst 1000 men: {original_checked_cnt * 100 / dataset_size:.1f}%')
+        print(f'Percentage checked when gender is changed to female: {changed_checked_cnt * 100 / dataset_size:.1f}%')
+
+        self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
