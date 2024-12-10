@@ -45,8 +45,7 @@ def add_checked(df):
 class BiasTest(unittest.TestCase):
 
     def setUp(self):
-        pass
-        # self.new_session = ort.InferenceSession('path_to_your_model.onnx')
+        self.new_session = ort.InferenceSession('path_to_your_model.onnx')
 
     def test_gender_has_children(self):
         # Load the data
