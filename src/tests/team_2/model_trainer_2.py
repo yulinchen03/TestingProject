@@ -28,7 +28,7 @@ def data_manipulator():
 
 
 def retrain(X, y):
-    model_path = "../../../model/gboost2.onnx" # replace with gboost2.onnx if you are working on the bad model
+    model_path = "model/gboost2.onnx" # replace with gboost2.onnx if you are working on the bad model
     selector = VarianceThreshold()
     classifier = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
     pipeline = Pipeline(steps=[('feature selection', selector), ('classification', classifier)])
@@ -59,6 +59,6 @@ def run(path):
     retrain(X, y)
 
 
-path = '../../../data/synth_data_train_labeled.csv'
-run(path)
+# path = '../../../data/synth_data_train_labeled.csv'
+# run(path)
 
