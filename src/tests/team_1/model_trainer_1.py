@@ -4,7 +4,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
 from onnxconverter_common import FloatTensorType
 from skl2onnx import convert_sklearn
-from src.tests.test_utils import *
+from src.utils.test_utils import *
 
 
 def load_data(path):
@@ -15,6 +15,13 @@ def load_data(path):
     y = df['checked']
 
     return X, y
+
+
+def filter_features(features, keywords):
+    return [
+        feature for feature in features
+        if any(f"_{keyword}_" in f"_{feature}_" for keyword in keywords)
+    ]
 
 
 # Manipulate the data to reduce/increase bias

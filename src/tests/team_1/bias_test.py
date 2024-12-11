@@ -4,7 +4,7 @@ from scipy.stats import ttest_ind
 import unittest
 import onnxruntime as ort
 from sklearn.metrics import accuracy_score
-from src.tests.test_utils import *
+from src.utils.test_utils import *
 
 
 '''
