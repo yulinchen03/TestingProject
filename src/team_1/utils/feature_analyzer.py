@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import pickle
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import MinMaxScaler
 
@@ -20,11 +20,11 @@ class FeatureAnalyzer:
     def evaluate_importance(self,
                             dataframe,
                             target,
-                            add_drop=[],  
-                            model=None, 
-                            n_repeats=5, 
-                            n_jobs=-1, 
-                            random_state=None, 
+                            add_drop=[],
+                            model=None,
+                            n_repeats=5,
+                            n_jobs=-1,
+                            random_state=None,
                             cache=True,
                             filename="feature_importance.pkl"):
 
@@ -35,9 +35,9 @@ class FeatureAnalyzer:
         self.y = dataframe_norm[target]
 
         if model is None:
-            model = RandomForestClassifier(random_state=random_state)
+            model = GradientBoostingClassifier(random_state=random_state)
         model.fit(self.X, self.y)
-        
+
         feature_importance = permutation_importance(
             model, self.X, self.y, n_repeats=n_repeats, random_state=random_state, n_jobs=n_jobs
         )
@@ -45,7 +45,7 @@ class FeatureAnalyzer:
         if cache:
             with open(filename, "wb") as f:
                 pickle.dump(feature_importance, f)
-        
+
         self.feature_importance = feature_importance
 
     def feature_importance_as_dict(self, column_names=None, normalize=False):
@@ -73,17 +73,17 @@ class FeatureAnalyzer:
         else:
             scaler = MinMaxScaler()
             features_mean = scaler.fit_transform(self.feature_importance.importances_mean.reshape(-1, 1)).flatten()
-            # features_std = scaler.fit_transform(self.feature_importance.importances_std.reshape(-1, 1)).flatten()
+            features_std = scaler.fit_transform(self.feature_importance.importances_std.reshape(-1, 1)).flatten()
 
             threshold = features_mean > min_val
             filtered_features_mean = features_mean[threshold]
-            # filtered_features_std = features_std[threshold]
+            filtered_features_std = features_std[threshold]
             filtered_features_names = column_names[threshold]
 
             importances_mean = pd.Series(filtered_features_mean, index=filtered_features_names)
 
             fig, ax = plt.subplots()
-            # importances_mean.plot.bar(yerr=filtered_features_std, ax=ax)
+            importances_mean.plot.bar(yerr=filtered_features_std, ax=ax)
             importances_mean.plot.bar(ax=ax)
             ax.set_title("Feature importances using permutation on full model")
             ax.set_ylabel("Mean accuracy decrease")

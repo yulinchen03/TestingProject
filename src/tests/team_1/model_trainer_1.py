@@ -9,7 +9,6 @@ from src.tests.test_utils import *
 
 def load_data(path):
     # specify existing model path
-    model_path = "../../../model/gboost1.onnx"
     df = add_checked(pd.read_csv(path))
     X = df.drop(['checked', 'Ja', 'Nee'], axis=1)
     X = X.astype(np.float32)
@@ -19,16 +18,19 @@ def load_data(path):
 
 
 # Manipulate the data to reduce/increase bias
-def data_manipulator():
+def data_manipulator(X):
     ########INSERT DATA MANIPULATION CODE HERE##########
 
-    pass
+    # Zero truly biased columns (gender, race, langauge, address, bla-bla)
+    X['persoon_leeftijd_bij_onderzoek'] = X['persoon_leeftijd_bij_onderzoek'].mean()
+    print(X['persoon_leeftijd_bij_onderzoek'])
 
+    return X
     ####################################################
 
 
 def retrain(X, y):
-    model_path = "../../../model/gboost1.onnx" # replace with gboost2.onnx if you are working on the bad model
+    model_path = "../../../model/gboost1_v1.onnx"  # replace with gboost2.onnx if you are working on the bad model
     selector = VarianceThreshold()
     classifier = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
     pipeline = Pipeline(steps=[('feature selection', selector), ('classification', classifier)])
@@ -52,7 +54,7 @@ def run(path):
 
     # manipulate data
     print('Manipulating data.....')
-    # data_manipulator()
+    X = data_manipulator(X)
 
     # retrain model
     print(f'Retraining model.....')
