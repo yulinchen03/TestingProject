@@ -19,13 +19,48 @@ def load_data(path):
 
 
 # Manipulate the data to reduce/increase bias
-def data_manipulator():
-    ########INSERT DATA MANIPULATION CODE HERE##########
+def data_manipulator(data, feature, manipulation, fraction,  overwrite_value=None, remove_condition=None):
+    """
+    :param data: The data to be manipulated
+    :param feature: The feature to be manipulated
+    :param manipulation: manipulation type:
+        - 'overwrite': Overwrites values in specified feature and ensures the fraction is satisfied.
+        - 'remove': Remove a fraction of rows where the feature has the specified value
+    :param fraction: Fraction of data to be manipulated
+    :param overwrite_value: The value to be overwritten
+    :param remove_condition: The condition needed to be satisfied to be removed
+    """
 
-    pass
+    if not (0 < fraction < 1):
+        raise ValueError('fraction must be between 0 and 1')
 
-    ####################################################
+    manipulated_data = data.copy()
 
+    if manipulation == 'overwrite':
+        # calculate how many rows are needed to overwrite to satisfy fraction
+
+        target_count = int(len(manipulated_data) * fraction)
+        curr_count = (manipulated_data[feature] == overwrite_value).sum()
+
+        if curr_count < target_count:
+            # how many more to overwrite
+            rows_to_change = target_count - curr_count
+            idx_to_change = manipulated_data[manipulated_data[feature] != overwrite_value].sample(
+                n=rows_to_change, random_state=42).index
+            manipulated_data.loc[idx_to_change, feature] = overwrite_value
+
+    elif manipulation == 'remove':
+        # rows that match condition
+        matching_rows = manipulated_data[manipulated_data.apply(remove_condition, axis=1)]
+
+        # how many to remove
+        rows_to_remove = int(len(matching_rows) * fraction)
+
+        if rows_to_remove > 0:
+            idx_to_remove = matching_rows.sample(n=rows_to_remove, random_state=42).index
+            manipulated_data = manipulated_data.drop(idx_to_remove)
+
+    return manipulated_data
 
 def retrain(X, y):
     model_path = "model/gboost2.onnx" # replace with gboost2.onnx if you are working on the bad model
