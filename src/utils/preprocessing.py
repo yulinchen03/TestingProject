@@ -9,6 +9,7 @@ from scipy.stats import skew
 
 
 class DataProcessor:
+
     def __init__(self, X, y, most_important_features):
         self.X = X
         self.X_reduced = None

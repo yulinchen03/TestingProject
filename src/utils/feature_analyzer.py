@@ -6,6 +6,10 @@ from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import MinMaxScaler
 
 
+def filter_features(features, keywords):
+    return [feature for feature in features if any(keyword in feature for keyword in keywords)]
+
+
 class FeatureAnalyzer:
 
     def __init__(self):
