@@ -19,7 +19,12 @@ def load_data(path):
 
 
 # Manipulate the data to reduce/increase bias
-def data_manipulator(data, feature, manipulation, fraction,  overwrite_value=None, remove_condition=None):
+def data_manipulator(data: pd.DataFrame,
+                     feature: str,
+                     manipulation: str,
+                     fraction: float,
+                     overwrite_value=None,
+                     remove_condition=None) -> pd.DataFrame:
     """
     :param data: The data to be manipulated
     :param feature: The feature to be manipulated
