@@ -4,7 +4,7 @@ from scipy.stats import ttest_ind
 import unittest
 import onnxruntime as ort
 from sklearn.metrics import accuracy_score
-from src.tests.test_utils import *
+from src.utils.test_utils import *
 
 
 '''
@@ -47,7 +47,7 @@ class BiasTest(unittest.TestCase):
     def test_gender_bias(self):
         # change this with your dataset's path
         data_path = '../../../data/Experiment_persoon_geslacht_vrouw/male_only.csv'
-        model_path = "../../../model/gboost1.onnx" # replace with gboost2.onnx if you are working on the bad model
+        model_path = "../../../model/gboost1_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
 
         # change this when you want to test a different feature
         feature = 'persoon_geslacht_vrouw'
@@ -62,5 +62,70 @@ class BiasTest(unittest.TestCase):
         print(f'Accuracy for sample of {dataset_size} Women: {acc_changed * 100:.1f}%')
         print(f'Percentage checked amongst 1000 men: {original_checked_cnt * 100 / dataset_size:.1f}%')
         print(f'Percentage checked when gender is changed to female: {changed_checked_cnt * 100 / dataset_size:.1f}%')
+
+        self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
+
+    def test_age_bias(self):
+        # change this with your dataset's path
+        data_path = '../../../data/Experiment_persoon_leeftijd_bij_onderzoek/20_only.csv'
+        model_path = "../../../model/gboost1_v1.onnx"  # replace with gboost2.onnx if you are working on the bad model
+
+        # change this when you want to test a different feature
+        feature = 'persoon_leeftijd_bij_onderzoek'
+
+        new_val = 50  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
+
+        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
+            data_path, model_path, feature, new_val)  # DO NOT CHANGE
+
+        # Results messages (replace it with your own)
+        print(f'Accuracy for sample of {dataset_size} 20 year olds: {acc_original * 100:.1f}%')
+        print(f'Accuracy for sample of {dataset_size} 50 year olds: {acc_changed * 100:.1f}%')
+        print(f'Percentage checked amongst {dataset_size} 20 year olds: {original_checked_cnt * 100 / dataset_size:.1f}%')
+        print(f'Percentage checked when age is changed to {new_val}: {changed_checked_cnt * 100 / dataset_size:.1f}%')
+
+        self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
+
+
+    def test_history_of_development_bias(self):
+        # change this with your dataset's path
+        data_path = '../../../data/Experiment_pla_historie_ontwikkeling/0_only.csv'
+        model_path = "../../../model/gboost1_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
+
+        # change this when you want to test a different feature
+        feature = 'pla_historie_ontwikkeling'
+
+        new_val = 1  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
+
+        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
+            data_path, model_path, feature, new_val)  # DO NOT CHANGE
+
+        # Results messages (replace it with your own)
+        print(f'Accuracy for sample of {dataset_size} people with no development action plan: {acc_original * 100:.1f}%')
+        print(f'Accuracy for sample of {dataset_size} people with development action plan: {acc_changed * 100:.1f}%')
+        print(f'Percentage checked amongst {dataset_size} people with no action plan: {original_checked_cnt * 100 / dataset_size:.1f}%')
+        print(f'Percentage checked when everyone now has a plan: {changed_checked_cnt * 100 / dataset_size:.1f}%')
+
+        self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
+
+
+    def test_contact_about_motivation(self):
+        # change this with your dataset's path
+        data_path = '../../../data/Experiment_contacten_onderwerp_boolean_motivatie/0_only.csv'
+        model_path = "../../../model/gboost1_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
+
+        # change this when you want to test a different feature
+        feature = 'contacten_onderwerp_boolean_motivatie'
+
+        new_val = 1  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
+
+        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
+            data_path, model_path, feature, new_val)  # DO NOT CHANGE
+
+        # Results messages (replace it with your own)
+        print(f'Accuracy for sample of {dataset_size} people having no contact with the municipality about motivation: {acc_original * 100:.1f}%')
+        print(f'Accuracy for sample of {dataset_size} people having contact with the municipality about motivation: {acc_changed * 100:.1f}%')
+        print(f'Percentage checked amongst {dataset_size} people with no contact with the municipality about motivation: {original_checked_cnt * 100 / dataset_size:.1f}%')
+        print(f'Percentage checked when everyone had contact with the municipality about motivation: {changed_checked_cnt * 100 / dataset_size:.1f}%')
 
         self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
