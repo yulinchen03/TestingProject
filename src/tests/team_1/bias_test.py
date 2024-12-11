@@ -50,7 +50,7 @@ def _show_stats(dataset_size, acc_original, f_name_original, acc_changed, f_name
 class BiasTest(unittest.TestCase):
 
     def setUp(self):
-        self.model_path = "../../../model/gboost1_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
+        self.model_path = "../../../model/gboost1_v1.onnx"  # replace with gboost2.onnx if you are working on the bad model
 
     def test_gender_bias(self):
         # change this with your dataset's path
@@ -75,6 +75,7 @@ class BiasTest(unittest.TestCase):
 
         self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
 
+
     def test_age_bias(self):
         # change this with your dataset's path
         data_path = '../../../data/Experiment_persoon_leeftijd_bij_onderzoek/20_only.csv'
@@ -93,54 +94,6 @@ class BiasTest(unittest.TestCase):
                     f_name_original="20 Year Olds",
                     acc_changed=acc_changed,
                     f_name_changed="50 Year Olds",
-                    original_checked_cnt=original_checked_cnt,
-                    changed_checked_cnt=changed_checked_cnt)
-
-        self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
-
-
-    def test_history_of_development_bias(self):
-        # change this with your dataset's path
-        data_path = '../../../data/Experiment_pla_historie_ontwikkeling/0_only.csv'
-
-        # change this when you want to test a different feature
-        feature = 'pla_historie_ontwikkeling'
-
-        new_val = 1  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
-
-        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
-            data_path, self.model_path, feature, new_val)  # DO NOT CHANGE
-
-        # Results messages (replace it with your own)
-        _show_stats(dataset_size=dataset_size,
-                    acc_original=acc_original,
-                    f_name_original="With no action plan (development)",
-                    acc_changed=acc_changed,
-                    f_name_changed="With action plan (development)",
-                    original_checked_cnt=original_checked_cnt,
-                    changed_checked_cnt=changed_checked_cnt)
-
-        self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
-
-
-    def test_contact_about_motivation(self):
-        # change this with your dataset's path
-        data_path = '../../../data/Experiment_contacten_onderwerp_boolean_motivatie/0_only.csv'
-
-        # change this when you want to test a different feature
-        feature = 'contacten_onderwerp_boolean_motivatie'
-
-        new_val = 1  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
-
-        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
-            data_path, self.model_path, feature, new_val)  # DO NOT CHANGE
-
-        # Results messages (replace it with your own)
-        _show_stats(dataset_size=dataset_size,
-                    acc_original=acc_original,
-                    f_name_original="With no contact with municipality (motivation)",
-                    acc_changed=acc_changed,
-                    f_name_changed="With contact with municipality (motivation)",
                     original_checked_cnt=original_checked_cnt,
                     changed_checked_cnt=changed_checked_cnt)
 

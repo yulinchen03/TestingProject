@@ -6,12 +6,6 @@ from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import MinMaxScaler
 
 
-def filter_features(features, keywords=None):
-    if keywords is None:
-        keywords = ["adres", "taal", "geslacht", "leeftijd", "persoonlijke"]
-    return [feature for feature in features if any(keyword in feature for keyword in keywords)]
-
-
 class FeatureAnalyzer:
 
     def __init__(self):
@@ -19,7 +13,7 @@ class FeatureAnalyzer:
         self.y = None
         self.feature_importance = None
 
-    def load_importance(self, filepath="feature_importance.pkl"):
+    def load_importance(self, filepath="feature_importance/fi_v0.pkl"):
         with open(filepath, "rb") as f:
             self.feature_importance = pickle.load(f)
 
@@ -32,7 +26,7 @@ class FeatureAnalyzer:
                             n_jobs=-1,
                             random_state=None,
                             cache=True,
-                            filename="feature_importance.pkl"):
+                            filepath="feature_importance/fi_v0.pkl"):
 
         scaler = MinMaxScaler()
         dataframe_norm = pd.DataFrame(scaler.fit_transform(dataframe), columns=dataframe.columns)
@@ -49,7 +43,7 @@ class FeatureAnalyzer:
         )
 
         if cache:
-            with open(filename, "wb") as f:
+            with open(filepath, "wb") as f:
                 pickle.dump(feature_importance, f)
 
         self.feature_importance = feature_importance
@@ -88,10 +82,9 @@ class FeatureAnalyzer:
 
             importances_mean = pd.Series(filtered_features_mean, index=filtered_features_names)
 
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(12, 6))
             importances_mean.plot.bar(yerr=filtered_features_std, ax=ax)
             importances_mean.plot.bar(ax=ax)
             ax.set_title("Feature importances using permutation on full model")
             ax.set_ylabel("Mean accuracy decrease")
-            fig.tight_layout()
             plt.show()
