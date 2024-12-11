@@ -4,7 +4,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
 from onnxconverter_common import FloatTensorType
 from skl2onnx import convert_sklearn
-from src.tests.test_utils import *
+from src.utils.test_utils import *
 
 
 def load_data(path):
