@@ -36,7 +36,6 @@ def test_bias(data_path, model_path, feature, new_val):
     return acc_1, acc_2, p_value, df.shape[0], y_1_checked, y_2_checked
 
 
-
 def test_bias_with_range(data_path, model_path, feature, new_vals_range):
     model = rt.InferenceSession(model_path)
 
@@ -60,12 +59,3 @@ def test_bias_with_range(data_path, model_path, feature, new_vals_range):
 
     _, p_value = ttest_ind(y_1_pred, y_2_pred)
     return acc_1, acc_2, p_value, df.shape[0], y_1_checked, y_2_checked
-
-
-
-
-
-
-
-
-
