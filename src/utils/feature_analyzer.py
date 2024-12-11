@@ -6,7 +6,9 @@ from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import MinMaxScaler
 
 
-def filter_features(features, keywords):
+def filter_features(features, keywords=None):
+    if keywords is None:
+        keywords = ["adres", "taal", "geslacht", "leeftijd", "persoonlijke"]
     return [feature for feature in features if any(keyword in feature for keyword in keywords)]
 
 
