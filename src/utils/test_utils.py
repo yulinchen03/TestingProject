@@ -43,7 +43,8 @@ def test_bias_with_range(data_path, model_path, feature, new_vals_range):
 
     df = add_checked(pd.read_csv(data_path))
     df_change = df.copy()
-    df_change[feature] = np.random.randint(new_vals_range[0], new_vals_range[1], size=df_change.shape[0])
+    high = new_vals_range[1] + 1
+    df_change[feature] = np.random.randint(new_vals_range[0], high , size=df_change.shape[0])
 
     X_1 = df.drop(['checked', 'Ja', 'Nee'], axis=1)
     y_1 = df['checked']
