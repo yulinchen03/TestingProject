@@ -27,10 +27,10 @@ and the current count of a specific value of that feature (for re-balancing)
 '''
 def calc(sorted_values, sorted_counts):
     to_add = {}
-    mean = np.mean(sorted_counts)
+    maximum = np.max(sorted_counts)
     for value, count in zip(sorted_values, sorted_counts):
-        if count < mean:
-            to_add[value] = int(math.ceil((mean - count) / 100) * 100)
+        if count < maximum:
+            to_add[value] = int(math.floor((maximum - count) / 100) * 100)
     return to_add
 
 
@@ -63,7 +63,6 @@ def plot_distribution(col, feature):
         binned_values = [f"{int(round(interval.left))}-{int(round(interval.right))}" for interval in binned_data.index]
         binned_counts = binned_data.values
 
-        print(f'Mean:{np.mean(binned_counts)}')
         print(calc(binned_values, binned_counts))
 
         # Create the bar chart
@@ -80,8 +79,7 @@ def plot_distribution(col, feature):
                      fontsize=10,  # Font size
                      color='black')  # Text color
     else:
-        print(f'Mean:{np.mean(sorted_counts)}')
-        print(f'Differences with mean: {calc(sorted_values, sorted_counts)}')
+        print(calc(sorted_values, sorted_counts))
 
         # Create the bar chart
         plt.figure(figsize=(12, 5))  # Width: 10, Height: 5

@@ -14,7 +14,7 @@ import re
 
 
 def get_versioned_name(dir_path, filename_prefix, file_extension, create_new=False):
-    highest_id = None
+    highest_id = -1
     id_pattern = re.compile(rf"^{re.escape(filename_prefix)}(\d+){re.escape(file_extension)}$")
 
     for filename in os.listdir(dir_path):
@@ -49,8 +49,8 @@ def filter_features(features, keywords=None):
 def train(X, y, model_path):
     # Define the parameter grid for hyperparameter tuning
     param_grid = [{
-        'classification__learning_rate': [0.1, 0.3, 0.5],
-        'classification__max_depth': [1, 3, 5],
+        'classification__learning_rate': [0.3], # add more parameters if you wish to explore, for quick computation only the best one from a previous grid search was kept
+        'classification__max_depth': [3],
     }]
 
     selector = VarianceThreshold()

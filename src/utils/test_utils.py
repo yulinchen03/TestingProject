@@ -15,7 +15,9 @@ def test_bias(data_path, model_path, feature, new_val):
 
     df = add_checked(pd.read_csv(data_path))
     df_change = df.copy()
-    df_change[feature] = new_val # change value of feature here
+
+    for feature, val in zip(feature, new_val):
+        df_change[feature] = val  # change value of feature here
 
     X_1 = df.drop(['checked', 'Ja', 'Nee'], axis=1)
     y_1 = df['checked']
