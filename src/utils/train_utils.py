@@ -48,19 +48,20 @@ def filter_features(features, keywords=None):
 
 def train(X, y, model_path):
     # Define the parameter grid for hyperparameter tuning
-    param_grid = {
-        'learning_rate': [0.1, 0.3, 0.5],
-        'max_depth': [1, 3, 5],
-    }
+    param_grid = [{
+        'classification__learning_rate': [0.1, 0.3, 0.5],
+        'classification__max_depth': [1, 3, 5],
+    }]
 
     selector = VarianceThreshold()
     classifier = GradientBoostingClassifier(n_estimators=500, random_state=1, verbose=1)
+    pipeline = Pipeline([('feature selection', selector), ('classification', classifier)])
 
     # Define the cross-validation method
     cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=42)
 
     # Set up GridSearchCV
-    grid_search = GridSearchCV(estimator=classifier, param_grid=param_grid, cv=cv, scoring='accuracy', n_jobs=1, verbose=1)
+    grid_search = GridSearchCV(pipeline, param_grid, cv=cv, scoring='accuracy', n_jobs=-1, verbose=1)
 
     # Perform Grid Search
     grid_search.fit(X, y)
@@ -77,20 +78,14 @@ def train(X, y, model_path):
     print(f"Mean Accuracy: {mean_accuracy:.4f}")
     print(f"Standard Deviation of Accuracy: {std_accuracy:.4f}")
 
-    # pipeline = Pipeline(steps=[('feature selection', selector), ('classification', classifier)])
-    # pipeline.set_params(**best_params)
-    #
-    # # Let's train a simple model
-    # pipeline.fit(X, y)
+    # Let's convert the model to ONNX
+    onnx_model = convert_sklearn(
+        grid_search, initial_types=[('X', FloatTensorType((None, X.shape[1])))],
+        target_opset=12)
 
-    # # Let's convert the model to ONNX
-    # onnx_model = convert_sklearn(
-    #     pipeline, initial_types=[('X', FloatTensorType((None, X.shape[1])))],
-    #     target_opset=12)
-
-    # # Let's save the model
-    # onnx.save(onnx_model, model_path)
-    # print(f'Model successfully saved to {model_path}.')
+    # Let's save the model
+    onnx.save(onnx_model, model_path)
+    print(f'Model successfully saved to {model_path}.')
 
 
 def run(X, y, model_path):

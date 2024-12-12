@@ -1,3 +1,4 @@
+import math
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -18,6 +19,19 @@ def translate_cols(df, top_features):
         top_features_en[feature_en] = importance / sum(list(top_features.values()))
 
     return df, top_features_en
+
+
+'''
+calculate the difference between the mean of values of a feature 
+and the current count of a specific value of that feature (for re-balancing)
+'''
+def calc(sorted_values, sorted_counts):
+    to_add = {}
+    mean = np.mean(sorted_counts)
+    for value, count in zip(sorted_values, sorted_counts):
+        if count < mean:
+            to_add[value] = int(math.ceil((mean - count) / 100) * 100)
+    return to_add
 
 
 def plot_distribution(col, feature):
@@ -43,14 +57,17 @@ def plot_distribution(col, feature):
         data['Bins'] = pd.cut(data['Values'], bins=bins, include_lowest=False)
 
         # Aggregate counts by bins
-        binned_data = data.groupby('Bins')['Counts'].sum()
+        binned_data = data.groupby('Bins', observed=True)['Counts'].sum()
 
         # Convert binned data for plotting
         binned_values = [f"{int(round(interval.left))}-{int(round(interval.right))}" for interval in binned_data.index]
         binned_counts = binned_data.values
 
+        print(f'Mean:{np.mean(binned_counts)}')
+        print(calc(binned_values, binned_counts))
+
         # Create the bar chart
-        plt.figure(figsize=(8, 5))  # Width: 10, Height: 5
+        plt.figure(figsize=(12, 5))  # Width: 10, Height: 5
         plt.bar(binned_values, binned_counts, color='skyblue')
         plt.xticks(binned_values)  # This ensures only the existing values are displayed
 
@@ -63,8 +80,11 @@ def plot_distribution(col, feature):
                      fontsize=10,  # Font size
                      color='black')  # Text color
     else:
+        print(f'Mean:{np.mean(sorted_counts)}')
+        print(f'Differences with mean: {calc(sorted_values, sorted_counts)}')
+
         # Create the bar chart
-        plt.figure(figsize=(8, 5))  # Width: 10, Height: 5
+        plt.figure(figsize=(12, 5))  # Width: 10, Height: 5
         plt.bar(sorted_values, sorted_counts, color='skyblue')
         plt.xticks(sorted_values)  # This ensures only the existing values are displayed
 

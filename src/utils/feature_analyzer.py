@@ -81,10 +81,11 @@ class FeatureAnalyzer:
             filtered_features_names = column_names[threshold]
 
             importances_mean = pd.Series(filtered_features_mean, index=filtered_features_names)
+            sorted_means = importances_mean.sort_values()
 
             fig, ax = plt.subplots(figsize=(12, 6))
-            importances_mean.plot.bar(yerr=filtered_features_std, ax=ax)
-            importances_mean.plot.bar(ax=ax)
-            ax.set_title("Feature importances using permutation on full model")
+            sorted_means.plot.bar(yerr=filtered_features_std, ax=ax)
+            sorted_means.plot.bar(ax=ax)
+            ax.set_title("Feature importances >= 0.01 (ascending) using permutations on full model")
             ax.set_ylabel("Mean accuracy decrease")
             plt.show()

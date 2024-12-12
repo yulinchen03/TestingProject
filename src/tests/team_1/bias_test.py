@@ -50,7 +50,7 @@ def _show_stats(dataset_size, acc_original, f_name_original, acc_changed, f_name
 class BiasTest(unittest.TestCase):
 
     def setUp(self):
-        self.model_path = "../../../model/gboost1_v1.onnx"  # replace with gboost2.onnx if you are working on the bad model
+        self.model_path = "../../../model/gboost1_v3.onnx"  # replace with gboost2.onnx if you are working on the bad model
 
     def test_gender_bias(self):
         # change this with your dataset's path
@@ -98,3 +98,26 @@ class BiasTest(unittest.TestCase):
                     changed_checked_cnt=changed_checked_cnt)
 
         self.assertGreater(p_value, 0.05, msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
+
+    def test_history_of_development_bias(self):
+        # change this with your dataset's path
+        data_path = '../../../data/Experiment_pla_historie_ontwikkeling/0_only.csv'
+
+        # change this when you want to test a different feature
+        feature = 'pla_historie_ontwikkeling'
+
+        new_val = 1  # 0 -> 1 for women, set this to the value you want to test for (e.g Age 40 -> Age 20)
+
+        acc_original, acc_changed, p_value, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
+            data_path, self.model_path, feature, new_val)  # DO NOT CHANGE
+
+        # Results messages (replace it with your own)
+        print(
+            f'Accuracy for sample of {dataset_size} people with no development action plan: {acc_original * 100:.1f}%')
+        print(f'Accuracy for sample of {dataset_size} people with development action plan: {acc_changed * 100:.1f}%')
+        print(
+            f'Percentage checked amongst {dataset_size} people with no action plan: {original_checked_cnt * 100 / dataset_size:.1f}%')
+        print(f'Percentage checked when everyone now has a plan: {changed_checked_cnt * 100 / dataset_size:.1f}%')
+
+        self.assertGreater(p_value, 0.05,
+                           msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
