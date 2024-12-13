@@ -102,3 +102,137 @@ def plot_distribution(col, feature):
 
     # Show the plot
     plt.show()
+
+def plot_dist_checked(df, feature):
+    """
+    Plots the distribution of a feature's values, segmented by the 'checked' status.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame containing the data.
+    - feature (str): The name of the feature column to plot.
+
+    Returns:
+    - None
+    """
+    
+    # Ensure the feature exists in the DataFrame
+    if feature not in df.columns:
+        raise ValueError(f"Feature '{feature}' not found in the DataFrame.")
+    
+    if 'checked' not in df.columns:
+        raise ValueError("The DataFrame does not contain a 'checked' column.")
+    
+    # Drop rows with missing values in the feature or 'checked' columns
+    df = df.dropna(subset=[feature, 'checked'])
+    
+    # Sort the feature column
+    sorted_col = df[feature].sort_values()
+    
+    # Get value counts
+    value_counts = sorted_col.value_counts(ascending=True)
+    
+    values = value_counts.index.tolist()  # Unique values
+    counts = value_counts.values.tolist()  # Counts of each value
+    
+    sorted_values_counts = sorted(zip(values, counts))  # Sort pairs by values
+    sorted_values, sorted_counts = zip(*sorted_values_counts)  # Unzip
+    
+    sorted_values = list(sorted_values)
+    sorted_counts = list(sorted_counts)
+    
+    # Determine if binning is needed
+    if len(sorted_values) >= 10:
+        # Binning the feature into 10 equal-width bins
+        num_bins = 10
+        bins = np.linspace(min(sorted_values), max(sorted_values), num_bins + 1)  # 10 bins -> 11 edges
+        bins = [int(round(num)) for num in bins]  # Convert bin edges to integers
+        
+        # Assign each value to a bin
+        df['Bins'] = pd.cut(df[feature], bins=bins, include_lowest=True)
+        
+        # Aggregate counts by bins and 'checked' status
+        binned_data = df.groupby(['Bins', 'checked']).size().unstack(fill_value=0)
+        
+        # Prepare labels and counts for plotting
+        binned_values = [f"{int(round(interval.left))}-{int(round(interval.right))}" for interval in binned_data.index]
+        checked_true = binned_data.get(True, pd.Series([0]*len(binned_data))).values
+        checked_false = binned_data.get(False, pd.Series([0]*len(binned_data))).values
+        
+        # **Adjusted calc call**: Combine the counts if calc expects two arguments
+        # Example: Calculate total counts per bin
+        total_counts = checked_true + checked_false
+        print(calc(binned_values, total_counts))
+        
+        # Create the stacked bar chart
+        plt.figure(figsize=(12, 6))  # Increased height for better readability
+        bar_width = 0.6
+        indices = np.arange(len(binned_values))
+        
+        # Plot 'checked' == True
+        plt.bar(indices, checked_true, bar_width, label='Checked True', color='skyblue')
+        
+        # Plot 'checked' == False on top of 'checked' == True
+        plt.bar(indices, checked_false, bar_width, bottom=checked_true, label='Checked False', color='salmon')
+        
+        # Set x-axis labels and positions
+        plt.xticks(indices, binned_values, rotation=45)
+        
+        # Overlay count labels
+        for i in range(len(binned_values)):
+            total = checked_true[i] + checked_false[i]
+            plt.text(i, total + max(total_counts)*0.01,  # Position slightly above the bar
+                     str(total), 
+                     ha='center', 
+                     va='bottom', 
+                     fontsize=9, 
+                     color='black')
+        
+    else:
+        # No binning needed; plot each unique value separately
+        
+        # Aggregate counts by feature value and 'checked' status
+        grouped_data = df.groupby([feature, 'checked']).size().unstack(fill_value=0)
+        
+        # Ensure all unique values are present in the grouped data
+        grouped_data = grouped_data.reindex(sorted_values, fill_value=0)
+        
+        # Prepare counts
+        checked_true = grouped_data.get(True, pd.Series([0]*len(grouped_data))).values
+        checked_false = grouped_data.get(False, pd.Series([0]*len(grouped_data))).values
+        
+        # **Adjusted calc call**: Combine the counts if calc expects two arguments
+        # Example: Calculate total counts per value
+        total_counts = checked_true + checked_false
+        print(calc(sorted_values, total_counts))
+        
+        # Create the stacked bar chart
+        plt.figure(figsize=(12, 6))
+        bar_width = 0.6
+        indices = np.arange(len(sorted_values))
+        
+        # Plot 'checked' == True
+        plt.bar(indices, checked_true, bar_width, label='Checked True', color='skyblue')
+        
+        # Plot 'checked' == False on top of 'checked' == True
+        plt.bar(indices, checked_false, bar_width, bottom=checked_true, label='Checked False', color='salmon')
+        
+        # Set x-axis labels and positions
+        plt.xticks(indices, sorted_values, rotation=45)
+        
+        # Overlay count labels
+        for i in range(len(sorted_values)):
+            total = checked_true[i] + checked_false[i]
+            plt.text(i, total + max(total_counts)*0.01,  # Position slightly above the bar
+                     str(total), 
+                     ha='center', 
+                     va='bottom', 
+                     fontsize=9, 
+                     color='black')
+    
+    # Add labels and title
+    plt.xlabel(feature)
+    plt.ylabel('Counts')
+    plt.title(f'Distribution of {feature} by Checked Status')
+    plt.legend()
+    plt.tight_layout()  # Adjust layout to prevent clipping of labels
+    plt.show()
