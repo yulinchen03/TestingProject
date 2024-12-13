@@ -106,15 +106,8 @@ def plot_distribution(col, feature):
 def plot_dist_checked(df, feature):
     """
     Plots the distribution of a feature's values, segmented by the 'checked' status.
-
-    Parameters:
-    - df (pd.DataFrame): The DataFrame containing the data.
-    - feature (str): The name of the feature column to plot.
-
-    Returns:
-    - None
+    Also shows the counts of 'Checked True' and 'Checked False' within their corresponding bins.
     """
-    
     # Ensure the feature exists in the DataFrame
     if feature not in df.columns:
         raise ValueError(f"Feature '{feature}' not found in the DataFrame.")
@@ -144,7 +137,7 @@ def plot_dist_checked(df, feature):
     if len(sorted_values) >= 10:
         # Binning the feature into 10 equal-width bins
         num_bins = 10
-        bins = np.linspace(min(sorted_values), max(sorted_values), num_bins + 1)  # 10 bins -> 11 edges
+        bins = np.linspace(min(sorted_values), max(sorted_values), num_bins + 1)
         bins = [int(round(num)) for num in bins]  # Convert bin edges to integers
         
         # Assign each value to a bin
@@ -158,13 +151,12 @@ def plot_dist_checked(df, feature):
         checked_true = binned_data.get(True, pd.Series([0]*len(binned_data))).values
         checked_false = binned_data.get(False, pd.Series([0]*len(binned_data))).values
         
-        # **Adjusted calc call**: Combine the counts if calc expects two arguments
-        # Example: Calculate total counts per bin
+        # Example calc call (adjust as needed)
         total_counts = checked_true + checked_false
-        print(calc(binned_values, total_counts))
+        # print(calc(binned_values, total_counts))  # Uncomment if calc is defined elsewhere
         
         # Create the stacked bar chart
-        plt.figure(figsize=(12, 6))  # Increased height for better readability
+        plt.figure(figsize=(12, 6))
         bar_width = 0.6
         indices = np.arange(len(binned_values))
         
@@ -177,57 +169,91 @@ def plot_dist_checked(df, feature):
         # Set x-axis labels and positions
         plt.xticks(indices, binned_values, rotation=45)
         
-        # Overlay count labels
+        # Overlay count labels for each segment
         for i in range(len(binned_values)):
-            total = checked_true[i] + checked_false[i]
-            plt.text(i, total + max(total_counts)*0.01,  # Position slightly above the bar
+            true_count = checked_true[i]
+            false_count = checked_false[i]
+            total = true_count + false_count
+
+            # Total count above the stack
+            plt.text(i, total + max(total_counts)*0.01,
                      str(total), 
                      ha='center', 
                      va='bottom', 
                      fontsize=9, 
                      color='black')
+
+            # Checked True count (inside the bottom bar if > 0)
+            if true_count > 0:
+                plt.text(i, true_count/2,
+                         str(true_count),
+                         ha='center',
+                         va='center',
+                         fontsize=9,
+                         color='black')
+            
+            # Checked False count (inside the top bar if > 0)
+            if false_count > 0:
+                plt.text(i, true_count + false_count/2,
+                         str(false_count),
+                         ha='center',
+                         va='center',
+                         fontsize=9,
+                         color='black')
         
     else:
         # No binning needed; plot each unique value separately
-        
-        # Aggregate counts by feature value and 'checked' status
         grouped_data = df.groupby([feature, 'checked']).size().unstack(fill_value=0)
-        
-        # Ensure all unique values are present in the grouped data
         grouped_data = grouped_data.reindex(sorted_values, fill_value=0)
         
-        # Prepare counts
         checked_true = grouped_data.get(True, pd.Series([0]*len(grouped_data))).values
         checked_false = grouped_data.get(False, pd.Series([0]*len(grouped_data))).values
         
-        # **Adjusted calc call**: Combine the counts if calc expects two arguments
-        # Example: Calculate total counts per value
         total_counts = checked_true + checked_false
-        print(calc(sorted_values, total_counts))
+        # print(calc(sorted_values, total_counts))  # Uncomment if calc is defined
         
         # Create the stacked bar chart
         plt.figure(figsize=(12, 6))
         bar_width = 0.6
         indices = np.arange(len(sorted_values))
         
-        # Plot 'checked' == True
         plt.bar(indices, checked_true, bar_width, label='Checked True', color='skyblue')
-        
-        # Plot 'checked' == False on top of 'checked' == True
         plt.bar(indices, checked_false, bar_width, bottom=checked_true, label='Checked False', color='salmon')
         
         # Set x-axis labels and positions
         plt.xticks(indices, sorted_values, rotation=45)
         
-        # Overlay count labels
+        # Overlay count labels for each segment
         for i in range(len(sorted_values)):
-            total = checked_true[i] + checked_false[i]
-            plt.text(i, total + max(total_counts)*0.01,  # Position slightly above the bar
+            true_count = checked_true[i]
+            false_count = checked_false[i]
+            total = true_count + false_count
+
+            # Total count above the stack
+            plt.text(i, total + max(total_counts)*0.01,
                      str(total), 
                      ha='center', 
                      va='bottom', 
                      fontsize=9, 
                      color='black')
+
+            # Checked True count (inside the bottom bar if > 0)
+            if true_count > 0:
+                plt.text(i, true_count/2,
+                         str(true_count),
+                         ha='center',
+                         va='center',
+                         fontsize=9,
+                         color='black')
+            
+            # Checked False count (inside the top bar if > 0)
+            if false_count > 0:
+                plt.text(i, true_count + false_count/2,
+                         str(false_count),
+                         ha='center',
+                         va='center',
+                         fontsize=9,
+                         color='black')
     
     # Add labels and title
     plt.xlabel(feature)
