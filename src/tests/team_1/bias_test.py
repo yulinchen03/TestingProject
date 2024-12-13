@@ -1,43 +1,5 @@
-import numpy as np
-import pandas as pd
-from scipy.stats import ttest_ind
 import unittest
-import onnxruntime as ort
-from sklearn.metrics import accuracy_score
 from src.utils.test_utils import *
-
-
-'''
-IMPORTANT! READ BEFORE WRITING TESTS
-
-Naming convention:
-    Tests should be named as follows: test_root_featureA_featureB_.... The root is the feature you want to test.
-    The features A, B, ... are the features that you want to test in relation to the root feature (tree branches).
-    If you still have no idea what I'm talking about, check the example below.
-
-How to write tests (WTF is going on):
-    Each test tests the bias in specific subset of features. For more information,
-    check this: https://www.wired.com/story/welfare-state-algorithms/.
-    What they do is show how rating of a person will change if some/multiple parameters
-    will change. So, this is what our tests should do. For example, if we choose subset
-    that contains gender with particular additional feature (like haschildren), we can test
-    how the rating will change if we swap the gender in a subset of haschildren=true.
-    You root is gender, and feature_to_test is has_children. You can also test only root features,
-    then the test name will be test_root (e.g. test_gender).
-    Example test provided below.
-
-Data generation:
-    Before writing tests, you need to generate data. You can use the data generation script
-    provided here: https://github.com/abuszydlik/Social-Welfare-Dataset/blob/main/DataManual.md.
-    Essentially, you can choose specific features and their values, and generate data
-    from distribution. Use the same naming convention for tests like "data_root_featureA_featureB_...".
-
-Run tests:
-    Just in case if you forgot how to do it: python -m unittest <relative_test_path>
-    (or python3 if you use MacOS).
-
-GOOD FUCKING LUCK!
-'''
 
 
 def _show_stats(dataset_size, acc_original, f_name_original, acc_changed, f_name_changed, original_checked_cnt, changed_checked_cnt, p_val):
@@ -66,6 +28,9 @@ def _run_bias_test(data_path, model_path, modified_model_path, feature, new_val,
 
 
 class BiasTest(unittest.TestCase):
+    """
+    Test the bias of the model by changing the values of certain features in the dataset.
+    """
 
     def setUp(self):
         self.model_path = "../../../model/gboost1_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
@@ -105,7 +70,6 @@ class BiasTest(unittest.TestCase):
         )
 
     def test_case_single_mother(self):
-        """Test case for a single mother of two."""
         self._test_bias(
             data_path='../../../data/Experiment_single_mother_of_two/average_male.csv',
             feature=['persoon_geslacht_vrouw', 'relatie_partner_huidige_partner___partner__gehuwd_',
@@ -118,19 +82,17 @@ class BiasTest(unittest.TestCase):
         )
 
     def test_case_immigrant_worker(self):
-        """Test case for an immigrant worker with roommates."""
         self._test_bias(
             data_path='../../../data/Experiment_immigrant_with_roommates/average_male.csv',
             feature=['persoonlijke_eigenschappen_spreektaal_anders', 'relatie_overig_historie_vorm__andere_inwonende',
                      'persoonlijke_eigenschappen_taaleis_voldaan', 'adres_recentste_buurt_other', 'adres_recentste_wijk_delfshaven',
                      'persoonlijke_eigenschappen_motivatie_opm', 'persoonlijke_eigenschappen_houding_opm'],
-            new_val=[1, 3, 0, 0, 1, 0, 0],  # Changing to immigrant worker with roommates
+            new_val=[1, 3, 0, 0, 1, 0, 0],
             desc_original="Average Dutch male",
             desc_changed="Immigrant worker with roommates"
         )
 
     def test_case_high_risk_individual(self):
-        """Test case for a high-risk individual."""
         self._test_bias(
             data_path='../../../data/Experiment_high_risk_profile/low_risk_50yr_men.csv',
             feature=['persoon_leeftijd_bij_onderzoek', 'persoon_geslacht_vrouw',
