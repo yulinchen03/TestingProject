@@ -1,30 +1,5 @@
-import unittest
 from src.utils.test_utils import *
-
-
-def _show_stats(dataset_size, acc_original, f_name_original, acc_changed, f_name_changed, original_checked_cnt, changed_checked_cnt, p_val):
-    print(f'Accuracy for sample of {dataset_size} {f_name_original}: {acc_original * 100:.1f}%')
-    print(f'Accuracy for sample of {dataset_size} {f_name_changed}: {acc_changed * 100:.1f}%')
-    print(f'Percentage checked amongst {f_name_original}: {original_checked_cnt * 100 / dataset_size:.1f}%')
-    print(f'Percentage checked changed to {f_name_changed}: {changed_checked_cnt * 100 / dataset_size:.1f}%')
-    print(f'P value: {p_val}')
-
-
-def _run_bias_test(data_path, model_path, modified_model_path, feature, new_val, desc_original, desc_changed):
-    # Run bias test on the original model
-    acc_original, acc_changed, p_value_1, dataset_size, original_checked_cnt, changed_checked_cnt = test_bias(
-        data_path, model_path, feature, new_val)
-
-    # Run bias test on the modified model
-    acc_original_2, acc_changed_2, p_value_2, dataset_size_2, original_checked_cnt_2, changed_checked_cnt_2 = test_bias(
-        data_path, modified_model_path, feature, new_val)
-
-    print("=== Original Model Results ===")
-    _show_stats(dataset_size, acc_original, desc_original, acc_changed, desc_changed, original_checked_cnt, changed_checked_cnt, p_value_1)
-    print("\n=== Modified Model Results ===")
-    _show_stats(dataset_size_2, acc_original_2, desc_original, acc_changed_2, desc_changed, original_checked_cnt_2, changed_checked_cnt_2, p_value_2)
-
-    return p_value_2
+import unittest
 
 
 class BiasTest(unittest.TestCase):
@@ -37,7 +12,7 @@ class BiasTest(unittest.TestCase):
         self.modified_model_path = "../../../model/gboost1_v2.onnx"
 
     def _test_bias(self, data_path, feature, new_val, desc_original, desc_changed):
-        p_value_2 = _run_bias_test(data_path, self.model_path, self.modified_model_path, feature, new_val,
+        p_value_2 = run_bias_test(data_path, self.model_path, self.modified_model_path, feature, new_val,
                                    desc_original, desc_changed)
         self.assertGreater(p_value_2, 0.05,
                            msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')

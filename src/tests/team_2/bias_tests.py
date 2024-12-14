@@ -1,62 +1,16 @@
-import numpy as np
-import pandas as pd
-from scipy.stats import ttest_ind
-import unittest
-import onnxruntime as ort
-from sklearn.metrics import accuracy_score
 from src.utils.test_utils import *
-
-
-'''
-IMPORTANT! READ BEFORE WRITING TESTS
-
-Naming convention:
-    Tests should be named as follows: test_root_featureA_featureB_.... The root is the feature you want to test.
-    The features A, B, ... are the features that you want to test in relation to the root feature (tree branches).
-    If you still have no idea what I'm talking about, check the example below.
-
-How to write tests (WTF is going on):
-    Each test tests the bias in specific subset of features. For more information,
-    check this: https://www.wired.com/story/welfare-state-algorithms/.
-    What they do is show how rating of a person will change if some/multiple parameters
-    will change. So, this is what our tests should do. For example, if we choose subset
-    that contains gender with particular additional feature (like haschildren), we can test
-    how the rating will change if we swap the gender in a subset of haschildren=true.
-    You root is gender, and feature_to_test is has_children. You can also test only root features,
-    then the test name will be test_root (e.g. test_gender).
-    Example test provided below.
-
-Data generation:
-    Before writing tests, you need to generate data. You can use the data generation script
-    provided here: https://github.com/abuszydlik/Social-Welfare-Dataset/blob/main/DataManual.md.
-    Essentially, you can choose specific features and their values, and generate data
-    from distribution. Use the same naming convention for tests like "data_root_featureA_featureB_...".
-
-Run tests:
-    Just in case if you forgot how to do it: python -m unittest <relative_test_path>
-    (or python3 if you use MacOS).
-
-GOOD FUCKING LUCK!
-'''
-
-
-def _show_stats(dataset_size, acc_original, f_name_original, acc_changed, f_name_changed, original_checked_cnt, changed_checked_cnt, p_val):
-    print(f'Accuracy for sample of {dataset_size} {f_name_original}: {acc_original * 100:.1f}%')
-    print(f'Accuracy for sample of {dataset_size} {f_name_changed}: {acc_changed * 100:.1f}%')
-    print(f'Percentage checked amongst {f_name_original}: {original_checked_cnt * 100 / dataset_size:.1f}%')
-    print(f'Percentage checked changed to {f_name_changed}: {changed_checked_cnt * 100 / dataset_size:.1f}%')
-    print(f'P value: {p_val}')
+import unittest
 
 
 class BiasTest(unittest.TestCase):
 
     def setUp(self):
-        self.model_path = "model/gboost2_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
-        self.modified_model_path = "model/gboost2_v2.onnx"
+        self.model_path = "../../../model/gboost2_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
+        self.modified_model_path = "../../../model/gboost2_v2.onnx"
 
     def test_gender_bias(self):
         # change this with your dataset's path
-        data_path = 'data/Experiment_persoon_geslacht_vrouw/male_only.csv'
+        data_path = '../../../data/Experiment_persoon_geslacht_vrouw/male_only.csv'
 
         # change this when you want to test a different feature
         feature = ['persoon_geslacht_vrouw']
@@ -72,7 +26,7 @@ class BiasTest(unittest.TestCase):
 
         print('\nThe original model:\n')
         
-        _show_stats(dataset_size=dataset_size,
+        show_stats(dataset_size=dataset_size,
                     acc_original=acc_original,
                     f_name_original="Men",
                     acc_changed=acc_changed,
@@ -83,7 +37,7 @@ class BiasTest(unittest.TestCase):
 
         print('\nAfter modifying the training data:\n')
 
-        _show_stats(dataset_size=dataset_size_2,
+        show_stats(dataset_size=dataset_size_2,
                     acc_original=acc_original_2,
                     f_name_original="Men",
                     acc_changed=acc_changed_2,
@@ -113,7 +67,7 @@ class BiasTest(unittest.TestCase):
 
         print('\nThe original model:\n')
         
-        _show_stats(dataset_size=dataset_size,
+        show_stats(dataset_size=dataset_size,
                     acc_original=acc_original,
                     f_name_original="20 Year Olds",
                     acc_changed=acc_changed,
@@ -124,7 +78,7 @@ class BiasTest(unittest.TestCase):
 
         print('\nAfter modifying the training data:\n')
 
-        _show_stats(dataset_size=dataset_size_2,
+        show_stats(dataset_size=dataset_size_2,
                     acc_original=acc_original_2,
                     f_name_original="20 Year Olds",
                     acc_changed=acc_changed_2,
@@ -194,7 +148,7 @@ class BiasTest(unittest.TestCase):
             data_path, self.modified_model_path, feature, new_val)  # DO NOT CHANGE
 
         print('\nThe original model:\n')
-        _show_stats(dataset_size=dataset_size,
+        show_stats(dataset_size=dataset_size,
                     acc_original=acc_original,
                     f_name_original="average male with no children",
                     acc_changed=acc_changed,
@@ -205,7 +159,7 @@ class BiasTest(unittest.TestCase):
 
         print('\nAfter modifying the training data:\n')
 
-        _show_stats(dataset_size=dataset_size_2,
+        show_stats(dataset_size=dataset_size_2,
                     acc_original=acc_original_2,
                     f_name_original="average male with no children",
                     acc_changed=acc_changed_2,
@@ -236,7 +190,7 @@ class BiasTest(unittest.TestCase):
             data_path, self.modified_model_path, feature, new_val)  # DO NOT CHANGE
 
         print('\nThe original model:\n')
-        _show_stats(dataset_size=dataset_size,
+        show_stats(dataset_size=dataset_size,
                     acc_original=acc_original,
                     f_name_original="50 year old men who knows Dutch and have no financial difficulties",
                     acc_changed=acc_changed,
@@ -247,7 +201,7 @@ class BiasTest(unittest.TestCase):
 
         print('\nAfter modifying the training data:\n')
 
-        _show_stats(dataset_size=dataset_size_2,
+        show_stats(dataset_size=dataset_size_2,
                     acc_original=acc_original_2,
                     f_name_original="50 year old men who knows Dutch and have no financial difficulties",
                     acc_changed=acc_changed_2,
