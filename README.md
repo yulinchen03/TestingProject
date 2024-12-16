@@ -1,33 +1,30 @@
-# TestingProject
-# CS4370 - Testing and Validation for AI-Intensive Systems
+# Testing and Validation for AI-Intensive Systems (Group 7)
 
-Welcome to Testing and Validation for AI-Intensive Systems.
-
-This repository contains the example for converting your model to onnx, using onnx runtime.
-
-#
-### <u>Pipenv</u>
-
-To make life easy for everyone, we've setup a pip file to ensure quick and easy install of dependencies.
-
-<b>NOTE</b>: <i>Before installing any dependencies, open the Pipfile in your editor and un-comment the version of Tensorflow for your system.</i>
-
-Open a terminal/ powershell and navigate to the project folder, then type:
-
-    pipenv shell
-
-This will put your current session into the python virtual environment. Then type:
-
-    pipenv install
-
-This will install the dependencies defined in the Pipfile, into this specific environment. By doing this, we can ensure no cross dependency issues when working on different python projects.
+This repository contains an ONNX model for image classification 
+using a pretrained neural network. The model is lightweight and optimized for deployment 
+on various platforms.
 
 ---
 
-You will need to enable this virtual environment in your code editor to ensure it uses the correct dependencies. For VS Code, this can be found in the bottom right corner of the UI.
+## Table of Contents
+1. [Requirements](#requirements)  
+2. [Model 1](#model-1)  
+3. [Model 2](#model-2)
+4. [How to Run](#how-to-run)
 
-It will currently likely show your current Python version. Click this and it will open up the 'Select Interpreter' drop down. For myself, the environment starts with <b><i>'labs'</i></b>, which I then click on to enable as my interpreter.
+---
 
-Yours will likely be the same, or if different, will be shown in your terminal/ powershell window when you typed 'pipenv shell' before.
+## Requirements
+List the tools, libraries, and environments required to run the model. For example:
+- Python 3.8 or higher
+  Install it using:  
+  ```bash
+  pip install -r requirements.txt
 
-That should have you up and running! Enjoy the labs and if you have any issues with this, please reach out to the staff and we'll do our best to get you going.
+## Model 1
+
+
+## Model 2
+
+
+## How to Run
