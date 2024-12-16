@@ -15,8 +15,9 @@ List the tools, libraries, and environments required to run the model. For examp
   pip install -r requirements.txt
   
 ## How to Run
-Before running models, you need to specify the data you want to train your model for.
-Then, for Model 1 and Model 2, just run Notebook <code>src/team_1/model1_training.ipynb</code>.
+To see how models should run, please refer to the corresponding model's README file.
+For Model 1 it is in <code>/src/team_1/model_1.md</code> and for Model 2 
+it is in <code>/src/team_2/model_2.md</code>.
   
 ## Testing Hints for Model 1 and Model 2
 Both models were tested using the same tests. The goal of one model was to
