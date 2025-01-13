@@ -8,8 +8,8 @@ class BiasTest(unittest.TestCase):
     """
 
     def setUp(self):
-        self.model_path = "../../../model/gboost1_v0.onnx"  # replace with gboost2.onnx if you are working on the bad model
-        self.modified_model_path = "../../../model/gboost1_v2.onnx"
+        self.model_path = "../../../model/model_1.onnx"  # replace with gboost2.onnx if you are working on the bad model
+        self.modified_model_path = "../../../model/model_2.onnx"
 
     def _test_bias(self, data_path, feature, new_val, desc_original, desc_changed):
         p_value_2 = run_bias_test(data_path, self.model_path, self.modified_model_path, feature, new_val,
@@ -73,7 +73,7 @@ class BiasTest(unittest.TestCase):
             feature=['persoon_leeftijd_bij_onderzoek', 'persoon_geslacht_vrouw',
                      'relatie_kind_huidige_aantal', 'persoonlijke_eigenschappen_taaleis_voldaan',
                      'belemmering_financiele_problemen'],
-            new_val=[20, 1, 1, 0, 1],  # Changing to high-risk profile
+            new_val=[20, 1, 2, 0, 1],  # Changing to high-risk profile
             desc_original="50 year old men who know Dutch and have no financial difficulties",
             desc_changed="20 year old mother of two who does not know Dutch and struggles to pay bills"
         )
