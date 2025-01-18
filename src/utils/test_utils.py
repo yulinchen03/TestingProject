@@ -27,10 +27,11 @@ def run_bias_test(data_path, model_path, modified_model_path, feature, new_val, 
     acc_original_2, acc_changed_2, p_value_2, dataset_size_2, original_checked_cnt_2, changed_checked_cnt_2 = test_bias(
         data_path, modified_model_path, feature, new_val)
 
-    print("=== Original Model Results ===")
+    print("=== Model 1 Results ===")
     show_stats(dataset_size, acc_original, desc_original, acc_changed, desc_changed, original_checked_cnt, changed_checked_cnt, p_value_1)
-    print("\n=== Modified Model Results ===")
+    print("\n=== Model 2 Results ===")
     show_stats(dataset_size_2, acc_original_2, desc_original, acc_changed_2, desc_changed, original_checked_cnt_2, changed_checked_cnt_2, p_value_2)
+    print("\n")
 
     return p_value_2
 

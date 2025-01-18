@@ -8,11 +8,11 @@ class BiasTest(unittest.TestCase):
     """
 
     def setUp(self):
-        self.model_path = "../../../model/model_1.onnx"  # replace with gboost2.onnx if you are working on the bad model
-        self.modified_model_path = "../../../model/model_2.onnx"
+        self.model_1_path = "../../../model/model_1.onnx"  # replace with gboost2.onnx if you are working on the bad model
+        self.model_2_path = "../../../model/model_2.onnx"
 
     def _test_bias(self, data_path, feature, new_val, desc_original, desc_changed):
-        p_value_2 = run_bias_test(data_path, self.model_path, self.modified_model_path, feature, new_val,
+        p_value_2 = run_bias_test(data_path, self.model_1_path, self.model_2_path, feature, new_val,
                                    desc_original, desc_changed)
         self.assertGreater(p_value_2, 0.05,
                            msg=f'Conclusion: Model showcases significant bias towards feature - {feature}')
