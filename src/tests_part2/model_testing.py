@@ -152,7 +152,7 @@ def test_gender_bias(model_1_path, model_2_path):
     """
     Test gender bias by changing gender from male to female.
     """
-    data_path = 'data/Experiment_persoon_geslacht_vrouw/male_only.csv'
+    data_path = '../../data/Experiment_persoon_geslacht_vrouw/male_only.csv'
     feature = ['persoon_geslacht_vrouw']
     new_val = [1]  # Changing gender to female [0 -> 1]
     desc_original = "Men"
@@ -185,7 +185,7 @@ def test_age_bias(model_1_path, model_2_path):
     """
     Test age bias by changing age from 20 to 50.
     """
-    data_path = 'data/Experiment_persoon_leeftijd_bij_onderzoek/20_only.csv'
+    data_path = '../../data/Experiment_persoon_leeftijd_bij_onderzoek/20_only.csv'
     feature = ['persoon_leeftijd_bij_onderzoek']
     new_val = [50]  # Changing age to 50 from 20
     desc_original = "20 Year Olds"
@@ -218,7 +218,7 @@ def test_history_of_development_bias(model_1_path, model_2_path):
     """
     Test bias by adding a development action plan.
     """
-    data_path = 'data/Experiment_pla_historie_ontwikkeling/0_only.csv'
+    data_path = '../../data/Experiment_pla_historie_ontwikkeling/0_only.csv'
     feature = ['pla_historie_ontwikkeling']
     new_val = [1]  # Adding development action plan
     desc_original = "No Development Action Plan"
@@ -251,7 +251,7 @@ def test_case_single_mother(model_1_path, model_2_path):
     """
     Test bias by changing to a single mother with two children.
     """
-    data_path = 'data/Experiment_single_mother_of_two/average_male.csv'
+    data_path = '../../data/Experiment_single_mother_of_two/average_male.csv'
     feature = [
         'persoon_geslacht_vrouw',
         'relatie_partner_huidige_partner___partner__gehuwd_',
@@ -292,7 +292,7 @@ def test_case_immigrant_worker(model_1_path, model_2_path):
     """
     Test bias by changing to an immigrant worker with roommates.
     """
-    data_path = 'data/Experiment_immigrant_with_roommates/average_male.csv'
+    data_path = '../../data/Experiment_immigrant_with_roommates/average_male.csv'
     feature = [
         'persoonlijke_eigenschappen_spreektaal_anders',
         'relatie_overig_historie_vorm__andere_inwonende',
@@ -333,7 +333,7 @@ def test_case_high_risk_individual(model_1_path, model_2_path):
     """
     Test bias by changing to a high-risk individual profile.
     """
-    data_path = 'data/Experiment_high_risk_profile/low_risk_50yr_men.csv'
+    data_path = '../../data/Experiment_high_risk_profile/low_risk_50yr_men.csv'
     feature = [
         'persoon_leeftijd_bij_onderzoek',
         'persoon_geslacht_vrouw',
